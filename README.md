@@ -12,6 +12,7 @@ Features
 
 - All of the features of Slim
 - Functional testing like [Silex](http://silex.sensiolabs.org/)
+- Mounting other applications like Silex
 
 Author
 ------
