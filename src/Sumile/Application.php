@@ -3,7 +3,7 @@ require_once 'Slim/Slim.php';
 
 class Sumile_Application extends Slim
 {
-    public function getFinalizedResponse()
+    public function performApplication()
     {
         set_error_handler(array('Slim', 'handleErrors'));
 
@@ -23,8 +23,10 @@ class Sumile_Application extends Slim
 
     public function run()
     {
+        $this->performApplication();
+
         //Fetch status, header, and body
-        list($status, $header, $body) = $this->getFinalizedResponse();
+        list($status, $header, $body) = $this->response()->finalize();
 
         //Send headers
         if ( headers_sent() === false ) {
