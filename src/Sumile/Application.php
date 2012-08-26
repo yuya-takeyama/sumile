@@ -102,13 +102,6 @@ class Sumile_Application extends Slim implements ArrayAccess
         }
     }
 
-    public function provideEventEmitter(Acne_Container $c)
-    {
-        require_once 'Edps/EventEmitter.php';
-
-        return new Edps_EventEmitter;
-    }
-
     public function performApplication()
     {
         set_error_handler(array('Slim', 'handleErrors'));
