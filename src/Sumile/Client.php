@@ -38,12 +38,29 @@ class Sumile_Client
         $env['PATH_INFO']      = ($uri === '/') ? '' : $uri;
         $env['REQUEST_URI']    = '/index.php' . $env['PATH_INFO'];
 
+        if (isset($params['files'])) {
+            $tmpFiles = $_FILES;
+            $_FILES   = array();
+
+            foreach ($params['files'] as $key => $path) {
+                $_FILES[$key] = array(
+                    'name'     => basename($path),
+                    'tmp_name' => $path,
+                    'size'     => filesize($path),
+                );
+            }
+        }
+
         $this->setUpEnv($env);
 
         $app = call_user_func($this->factory);
         $app->performApplication();
 
         $this->restoreEnv();
+
+        if (isset($params['files'])) {
+            $_FILES = $tmpFiles;
+        }
 
         return $app->response();
     }

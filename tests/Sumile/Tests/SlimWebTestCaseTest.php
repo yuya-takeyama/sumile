@@ -11,6 +11,7 @@ class Sumile_Tests_ExampleApp extends Sumile_Application
     public function initialize()
     {
         $this->get('/foo', array($this, 'getFoo'));
+        $this->post('/upload', array($this, 'postUpload'));
         $this->get('/', array($this, 'getIndex'));
         $this->post('/', array($this, 'postIndex'));
     }
@@ -28,6 +29,14 @@ class Sumile_Tests_ExampleApp extends Sumile_Application
     public function getFoo()
     {
         $this->response->write('Foo page');
+    }
+
+    public function postUpload()
+    {
+        $content = file_get_contents($_FILES['file']['tmp_name']);
+
+        $this->response->write("name: {$_FILES['file']['name']}, tmp_name: {$_FILES['file']['tmp_name']}, ");
+        $this->response->write("size: {$_FILES['file']['size']}, content: {$content}");
     }
 }
 
@@ -82,5 +91,19 @@ class Sumile_Tests_WebTestCaseTest extends Sumile_WebTestCase
         $response = $this->get('/foo');
 
         $this->assertEquals('Foo page', $response->body());
+    }
+
+    /**
+     * @test
+     */
+    public function request_file_upload()
+    {
+        $response = $this->post('/upload', array(
+            'files' => array(
+                'file' => 'tests/fixtures/hello.txt',
+            ),
+        ));
+
+        $this->assertEquals("name: hello.txt, tmp_name: tests/fixtures/hello.txt, size: 14, content: Hello, World!\n", $response->body());
     }
 }
