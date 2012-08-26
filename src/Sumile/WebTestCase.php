@@ -1,12 +1,10 @@
 <?php
-require_once dirname(__FILE__) . '/SlimWebTestCase/Client.php';
-
 /**
  * Silex like WebTestCase class for Slim.
  *
  * @author Yuya Takeyama
  */
-abstract class SlimWebTestCase extends PHPUnit_Framework_TestCase
+abstract class Sumile_WebTestCase extends PHPUnit_Framework_TestCase
 {
     protected $app;
 
@@ -31,14 +29,14 @@ abstract class SlimWebTestCase extends PHPUnit_Framework_TestCase
 
     public function createApp(array $env = array())
     {
-        SlimWebTestCase_Client::setUpServerEnv($env);
+        Sumile_Client::setUpServerEnv($env);
         $app = $this->createApplication();
-        SlimWebTestCase_Client::restoreServerEnv($env);
+        Sumile_Client::restoreServerEnv($env);
         return $app;
     }
 
     public function createClient(array $env = array())
     {
-        $client = new SlimWebTestCase_Client($this->app, $env);
+        $client = new Sumile_Client($this->app, $env);
     }
 }

@@ -1,5 +1,5 @@
 <?php
-class SlimWebTestCase_Tests_ExampleApp extends Slim
+class Sumile_Tests_ExampleApp extends Sumile_Application
 {
     public function __construct()
     {
@@ -19,19 +19,19 @@ class SlimWebTestCase_Tests_ExampleApp extends Slim
     }
 }
 
-class SlimWebTestCase_Tests_SlimWebTestCaseTest extends SlimWebTestCase
+class Sumile_Tests_WebTestCaseTest extends Sumile_WebTestCase
 {
     public function createApplication()
     {
-        return new SlimWebTestCase_Tests_ExampleApp;
+        return new Sumile_Tests_ExampleApp;
     }
 
     /**
      * @test
      */
-    public function createApp_should_be_a_Slim_application()
+    public function createApp_should_be_a_Sumile_Application()
     {
-        $this->assertInstanceOf('Slim', $this->createApp());
+        $this->assertInstanceOf('Sumile_Application', $this->createApp());
     }
 
     /**

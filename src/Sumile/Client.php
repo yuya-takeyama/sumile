@@ -1,16 +1,16 @@
 <?php
 /**
- * Client for Slim application
+ * Client for Sumile application
  *
  * @author Yuya Takeyama
  */
-class SlimWebTestCase_Client
+class Sumile_Client
 {
     protected $app;
 
     private static $tmpServerEnv;
 
-    public function __construct(Slim $app)
+    public function __construct(Sumile_Application $app)
     {
         $this->app = $app;
     }
