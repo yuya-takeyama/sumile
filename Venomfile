@@ -2,3 +2,9 @@
 github('https://github.com/codeguy/Slim', array(
     'branch' => 'develop',
 ));
+github('https://github.com/yuya-takeyama/acne', array(
+    'tag' => 'v0.0.0',
+));
+github('https://github.com/yuya-takeyama/edps', array(
+    'tag' => 'v0.0.1',
+));
