@@ -1,2 +1,4 @@
 <?php
-github('https://github.com/codeguy/Slim');
+github('https://github.com/codeguy/Slim', array(
+    'branch' => 'develop',
+));
