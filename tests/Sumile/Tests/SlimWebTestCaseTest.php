@@ -23,7 +23,7 @@ class Sumile_Tests_ExampleApp extends Sumile_Application
 
     public function postIndex()
     {
-        $this->response->write('Index page by POST');
+        $this->response->write(sprintf('$_POST["key"] = "%s"', $this->request->post('key')));
     }
 
     public function getFoo()
@@ -78,9 +78,13 @@ class Sumile_Tests_WebTestCaseTest extends Sumile_WebTestCase
 
     public function testPost()
     {
-        $response = $this->post('/');
+        $response = $this->post('/', array(
+            'post' => array(
+                'key' => 'POST value'
+            ),
+        ));
 
-        $this->assertEquals('Index page by POST', $response->body());
+        $this->assertEquals('$_POST["key"] = "POST value"', $response->body());
     }
 
     /**

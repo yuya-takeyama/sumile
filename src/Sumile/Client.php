@@ -54,6 +54,11 @@ class Sumile_Client
         $this->setUpEnv($env);
 
         $app = call_user_func($this->factory);
+
+        if (isset($params['post'])) {
+            $app->environment()->offsetSet('slim.request.form_hash', $params['post']);
+        }
+
         $app->performApplication();
 
         $this->restoreEnv();
