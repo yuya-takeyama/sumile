@@ -1,4 +1,6 @@
 <?php
+require_once 'Sumile/ServiceProviderInterface.php';
+require_once 'Sumile/Provider/EventEmitterServiceProvider.php';
 require_once 'Slim/Slim.php';
 require_once 'Acne.php';
 
@@ -16,6 +18,10 @@ class Sumile_Application extends Slim implements ArrayAccess
      */
     private $container;
 
+    private $providers = array();
+
+    private $booted = false;
+
     public function __construct(array $params = array())
     {
         $settings     = isset($params['settings']) ? $params['settings'] : array();
@@ -24,14 +30,12 @@ class Sumile_Application extends Slim implements ArrayAccess
         if ($this->isMaster()) {
             $this->container = isset($params['container']) ? $params['container'] : new Acne_Container;
 
-            $this->container->share('emitter', array($this, 'provideEventEmitter'));
+            $this->register(new Sumile_Provider_EventEmitterServiceProvider);
         } else {
             $this->master->inherit($this);
         }
 
         parent::__construct($settings);
-
-        $this->environment = Slim_Environment::getInstance(true);
     }
 
     public function offsetGet($key)
@@ -46,12 +50,19 @@ class Sumile_Application extends Slim implements ArrayAccess
 
     public function offsetSet($key, $value)
     {
-        throw new BadMethodCallException('Operation not allowed');
+        $this->container[$key] = $value;
     }
 
     public function offsetUnset($key)
     {
-        throw new BadMethodCallException('Operation not allowed');
+        unset($this->container[$key]);
+    }
+
+    public function share()
+    {
+        $args = func_get_args();
+
+        return call_user_func_array(array($this->container, 'share'), $args);
     }
 
     public function isMaster()
@@ -69,6 +80,28 @@ class Sumile_Application extends Slim implements ArrayAccess
         $this->container = $container;
     }
 
+    public function register(Sumile_ServiceProviderInterface $provider, array $values = array())
+    {
+        $this->providers[] = $provider;
+
+        $provider->register($this);
+
+        foreach ($values as $key => $value) {
+            $this[$key] = $value;
+        }
+    }
+
+    public function boot()
+    {
+        if (!$this->booted) {
+            foreach ($this->providers as $provider) {
+                $provider->register($this);
+            }
+
+            $this->booted = true;
+        }
+    }
+
     public function provideEventEmitter(Acne_Container $c)
     {
         require_once 'Edps/EventEmitter.php';
@@ -79,6 +112,8 @@ class Sumile_Application extends Slim implements ArrayAccess
     public function performApplication()
     {
         set_error_handler(array('Slim', 'handleErrors'));
+
+        $this->boot($this);
 
         //Apply final outer middleware layers
         $this->add(new Slim_Middleware_PrettyExceptions());
