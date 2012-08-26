@@ -2,6 +2,10 @@
 set_include_path(
     dirname(__FILE__) . '/../vendor/codeguy/Slim' .
     PATH_SEPARATOR .
+    dirname(__FILE__) . '/../vendor/yuya-takeyama/acne/src' .
+    PATH_SEPARATOR .
+    dirname(__FILE__) . '/../vendor/yuya-takeyama/edps/src' .
+    PATH_SEPARATOR .
     dirname(__FILE__) . '/../src' .
     PATH_SEPARATOR .
     get_include_path()
