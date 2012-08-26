@@ -1,8 +1,81 @@
 <?php
 require_once 'Slim/Slim.php';
+require_once 'Acne.php';
 
-class Sumile_Application extends Slim
+class Sumile_Application extends Slim implements ArrayAccess
 {
+    /**
+     * Master application
+     *
+     * @var Sumile_Application
+     */
+    private $master = null;
+
+    /**
+     * @var Acne_Container
+     */
+    private $container;
+
+    public function __construct(array $params = array())
+    {
+        $settings     = isset($params['settings']) ? $params['settings'] : array();
+        $this->master = isset($params['master'])   ? $params['master']   : null;
+
+        if ($this->isMaster()) {
+            $this->container = isset($params['container']) ? $params['container'] : new Acne_Container;
+
+            $this->container->share('emitter', array($this, 'provideEventEmitter'));
+        } else {
+            $this->master->inherit($this);
+        }
+
+        parent::__construct($settings);
+
+        $this->environment = Slim_Environment::getInstance(true);
+    }
+
+    public function offsetGet($key)
+    {
+        return $this->container[$key];
+    }
+
+    public function offsetExists($key)
+    {
+        return isset($this->container[$key]);
+    }
+
+    public function offsetSet($key, $value)
+    {
+        throw new BadMethodCallException('Operation not allowed');
+    }
+
+    public function offsetUnset($key)
+    {
+        throw new BadMethodCallException('Operation not allowed');
+    }
+
+    public function isMaster()
+    {
+        return is_null($this->master);
+    }
+
+    public function inherit(Sumile_Application $app)
+    {
+        $app->setContainer($this->container);
+    }
+
+    public function setContainer(Acne_Container $container)
+    {
+        $this->container = $container;
+    }
+
+    public function provideEventEmitter(Acne_Container $c)
+    {
+        require_once 'Edps/EventEmitter.php';
+
+        return new Edps_EventEmitter;
+    }
+
     public function performApplication()
     {
         set_error_handler(array('Slim', 'handleErrors'));

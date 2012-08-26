@@ -8,35 +8,27 @@ abstract class Sumile_WebTestCase extends PHPUnit_Framework_TestCase
 {
     protected $app;
 
-    public function setUp()
-    {
-        $this->app = $this->createApp($this->getDefaultServerEnv());
-    }
-
     abstract public function createApplication();
 
-    public function getDefaultServerEnv()
+    public function createClient()
     {
-        return array(
-            'REQUEST_METHOD' => 'GET',
-            'REMOTE_ADDR'    => 'client.localhost',
-            'REQUEST_URI'    => '/',
-            'SERVER_NAME'    => 'localhost',
-            'SERVER_PORT'    => 80,
-            'SCRIPT_NAME'    => '/index.php',
-        );
+        return new Sumile_Client(array($this, 'createApplication'));
     }
 
-    public function createApp(array $env = array())
+    public function requestWithMethod($method, $uri, array $params = array())
     {
-        Sumile_Client::setUpServerEnv($env);
-        $app = $this->createApplication();
-        Sumile_Client::restoreServerEnv($env);
-        return $app;
+        $args = func_get_args();
+        $client = $this->createClient();
+        return $client->request($method, $uri, $params);
     }
 
-    public function createClient(array $env = array())
+    public function get($uri, array $params = array())
     {
-        $client = new Sumile_Client($this->app, $env);
+        return $this->requestWithMethod('GET', $uri, $params);
+    }
+
+    public function post($uri, array $params = array())
+    {
+        return $this->requestWithMethod('POST', $uri, $params);
     }
 }

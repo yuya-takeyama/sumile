@@ -1,4 +1,6 @@
 <?php
+require_once 'Sumile/EnvironmentCleaner.php';
+
 /**
  * Client for Sumile application
  *
@@ -6,24 +8,53 @@
  */
 class Sumile_Client
 {
-    protected $app;
+    protected $factory;
 
-    private static $tmpServerEnv;
+    private $tmpServerEnv;
 
-    public function __construct(Sumile_Application $app)
+    public function __construct($factory)
     {
-        $this->app = $app;
+        $this->factory = $factory;
     }
 
-    public static function setUpServerEnv(array $env)
+    public function setUpEnv(array $env)
     {
-        self::$tmpServerEnv = $_SERVER;
-        $defaultEnv = array();
-        $_SERVER = array_merge($defaultEnv, $env);
+        $this->tmpServerEnv = $_SERVER;
+        $_SERVER = $env;
     }
 
-    public static function restoreServerEnv()
+    public function restoreEnv()
     {
-        $_SERVER = self::$tmpServerEnv;
+        $_SERVER = $this->tmpServerEnv;
+    }
+
+    public function request($method, $uri, $params = array())
+    {
+        Sumile_EnvironmentCleaner::clean();
+
+        $env = isset($params['env']) ? $params['env'] : $this->getDefaultEnv();
+
+        $env['REQUEST_METHOD'] = strtoupper($method);
+        $env['PATH_INFO']      = ($uri === '/') ? '' : $uri;
+        $env['REQUEST_URI']    = '/index.php' . $env['PATH_INFO'];
+
+        $this->setUpEnv($env);
+
+        $app = call_user_func($this->factory);
+        $app->performApplication();
+
+        $this->restoreEnv();
+
+        return $app->response();
+    }
+
+    public function getDefaultEnv()
+    {
+        return array(
+            'REMOTE_ADDR' => '127.0.0.1',
+            'SERVER_NAME' => 'localhost',
+            'SERVER_PORT' => '80',
+            'SCRIPT_NAME' => '/index.php',
+        );
     }
 }

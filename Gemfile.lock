@@ -11,10 +11,6 @@ GEM
       rb-fchange (~> 0.0.5)
       rb-fsevent (~> 0.9.1)
       rb-inotify (~> 0.8.8)
-    rack (1.4.1)
-    rack-legacy (0.3.4)
-      rack
-    rack-rewrite (1.2.1)
     rb-fchange (0.0.5)
       ffi
     rb-fsevent (0.9.1)
@@ -28,7 +24,4 @@ PLATFORMS
 
 DEPENDENCIES
   guard-phpunit
-  rack
-  rack-legacy
-  rack-rewrite
   rb-readline
