@@ -1,9 +1,9 @@
 <?php
 github('https://github.com/codeguy/Slim', array(
-    'branch' => 'develop',
+    'tag' => '1.6.7',
 ));
 github('https://github.com/yuya-takeyama/acne', array(
-    'tag' => 'v0.0.0',
+    'tag' => 'v0.1.0',
 ));
 github('https://github.com/yuya-takeyama/edps', array(
     'tag' => 'v0.0.1',
