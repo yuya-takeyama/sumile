@@ -1,6 +1,4 @@
 <?php
-require_once 'Sumile/EnvironmentCleaner.php';
-
 /**
  * Client for Sumile application
  *

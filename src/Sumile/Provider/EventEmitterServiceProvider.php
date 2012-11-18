@@ -12,8 +12,6 @@ class Sumile_Provider_EventEmitterServiceProvider implements Sumile_ServiceProvi
 
     public function provideEmitter($c)
     {
-        require_once 'Edps/EventEmitter.php';
-
         return new Edps_EventEmitter;
     }
 }

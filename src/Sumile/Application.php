@@ -1,6 +1,4 @@
 <?php
-require_once 'Sumile/ServiceProviderInterface.php';
-require_once 'Sumile/Provider/EventEmitterServiceProvider.php';
 require_once 'Slim/Slim.php';
 
 class Sumile_Application extends Slim implements ArrayAccess

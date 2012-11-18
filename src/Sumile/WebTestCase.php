@@ -1,6 +1,4 @@
 <?php
-require_once 'Sumile/Client.php';
-
 /**
  * Silex like WebTestCase class for Sumile.
  *
